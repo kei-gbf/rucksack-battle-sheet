@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Rank Match Graph - Tactical Style</title>
+    <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+    
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    -->
+    <link rel="stylesheet" type="text/css" href="./graph.css" />
+    <style>
+    </style>
+</head>
+<body>
+    <graph-chart></graph-chart>
+
+<script src="./graph.js"></script>
+<script>
+
+// NOTE: should be singleton
+const db = new Dexie("RankMatchDB");
+db.version(1).stores({ records: "++id, job, time, jw, w, rp, rank, totalRp, note" });
+
+
+
+renderChart();
+
+
+const channel = new BroadcastChannel('db_updates');
+
+channel.onmessage = (event) => {
+    if (event.data.action === 'RELOAD_CHARTS') {
+        console.log("別タブでデータが更新されました。グラフを更新します。");
+        // タブがアクティブな時だけ即時更新
+        if (document.visibilityState === 'visible') {
+            renderChart();
+        } else {
+            // 非アクティブなら、次にタブが表示された時に描画するフラグを立てる
+            window.needsUpdate = true;
+        }
+    }
+};
+
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && window.needsUpdate) {
+        renderChart();
+        window.needsUpdate = false;
+    }
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+
+body { background-color: #0d1117; color: #c9d1d9; }
+/* コンテナに高さを指定するのが重要 */
+.chart-container {
+    width: 90%; 
+    max-width: 800px; 
+    height: 400px; /* ★ここを固定または min-height で指定 */
+    margin: 40px auto;
+    background: #161b22;
+    padding: 20px;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    position: relative; /* 重要 */
+}

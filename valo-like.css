@@ -1,0 +1,134 @@
+
+    /* CSS変数でテーマを定義 */
+    :root {
+        --bg-color: #0f1923;
+        --card-bg: #1b262f;
+        --text-main: #ece8e1;
+        --text-sub: #768085;
+        --accent-win: #46ffac;
+        --accent-lose: #ff4655;
+        --accent-draw: #768087;   /* ドロー用の少し濃い目の灰色 */
+        --border-color: #383e42;
+        --font-base: 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body { 
+        font-family: var(--font-base); 
+        padding: 20px; 
+        background: var(--bg-color); 
+        color: var(--text-main); 
+        font-size: 13px;
+    }
+
+    h1 { margin: 0 0 20px 0; font-size: 20px; letter-spacing: 1px; }
+
+    /* ダッシュボード */
+    .dashboard { 
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; 
+        background: var(--card-bg); padding: 20px; border-radius: 4px; margin-bottom: 30px; 
+        border: 1px solid var(--border-color);
+    }
+    .meter-box { font-size: 12px; color: var(--text-sub); }
+    meter { 
+        width: 100%; height: 8px; margin-top: 5px;
+        background: var(--border-color);
+    }
+    meter::-webkit-meter-bar { background: var(--border-color); border: none; }
+    meter::-webkit-meter-optimum-value { background: var(--accent-win); }
+
+    /* 入力エリア */
+    .form-group { 
+        display: flex; gap: 20px; flex-wrap: wrap; align-items: baseline;
+        margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color);
+    }
+    input, select, button { 
+        background: transparent; border: none; border-bottom: 1px solid var(--text-sub);
+        color: var(--text-main); padding: 5px 0; outline: none; font-size: 13px;
+    }
+    input:focus { border-bottom-color: var(--accent-lose); }
+    button { 
+        background: var(--accent-lose); color: white; border: none; padding: 5px 20px; 
+        cursor: pointer; font-weight: bold; text-transform: uppercase;
+    }
+
+    /* 戦績表テーブル */
+    table { border-collapse: collapse; width: 100%; color: var(--text-main); }
+    th { text-align: center; padding: 12px; border-bottom: 2px solid var(--border-color); color: var(--text-sub); text-transform: uppercase; font-size: 12px; }
+    td { padding: 15px 12px; border-bottom: 1px solid #2a3439; text-align: center; }
+    
+    /* 勝利/敗北のスタイル */
+    tr.rp-w { border-left: 4px solid var(--accent-win); background: rgba(70, 255, 172, 0.05); }
+    tr.rp-l { border-left: 4px solid var(--accent-lose); background: rgba(255, 70, 85, 0.05); }
+    tr.rp-w:hover { border-left: 4px solid var(--accent-win); background: rgba(70, 255, 172, 0.6); }
+    tr.rp-l:hover { border-left: 4px solid var(--accent-lose); background: rgba(255, 70, 85, 0.6); }
+
+    tr.rp-w .col-rp { color: rgba(70, 255, 172, 0.9); }
+    tr.rp-l .col-rp { color: rgba(255, 70, 85, 0.9); }
+
+
+    tr.rp-d { border-left: 4px solid var(--accent-draw); background: rgba(188, 128, 135, 0.05); }
+    tr.rp-d:hover { border-left: 4px solid var(--accent-draw); background: rgba(188, 128, 135, 0.05); }
+    tr.rp-d .col-rp { color: rgba(188, 128, 135, 0.09); }
+
+    
+    .status { font-weight: bold; }
+
+    option { color: black;  }
+
+    button.add-btn {
+        background-color: teal;
+    }
+    button.reset-btn {
+        color: #888;
+        background-color: #800000;
+    }
+    button.del-btn {
+        font-size: small;
+        color: #888;
+        background-color: transparent;
+
+        opacity: 0;
+        transition: opacity 0.2s ease; /* opacityだけにアニメーションを適用 */
+    }
+    button.del-btn:hover {
+        opacity: .8;
+    }
+/*
+    td.job {
+        background-size: contain;
+          
+          background-position: center;
+          
+          background-repeat: no-repeat;
+      }
+
+      span {
+        display: inline-block;
+        transform: translate(30px, -5px);
+      }
+
+    td.job-1{
+        background-image: url("./img/100301_sw_1_01.png");
+    }
+    td.job-2{
+        background-image: url("./img/300301_sw_1_01.png");
+    }
+
+
+    td.job-3{
+        background-image: url("./img/470301_ax_1_01.png");
+    }
+
+    td.job-4{
+        background-image: url("./img/130401_wa_1_01.png");
+    }
+    td.job-5{
+        background-image: url("./img/150301_sw_1_01.png");
+    }
+    td.job-6{
+        background-image: url("./img/250301_wa_1_01.png");
+    }
+    td.job-8{
+        background-image: url("./img/410301_ax_1_01.png");
+    }
+    */
