@@ -164,6 +164,12 @@ table {
         margin-top: 10px;    /* グラフとの間隔 */
     }
 
+    #settings-dialog input {
+        color: black;
+    }
+    #settings-dialog input:focus {
+        border-color: black;
+    }
 
     </style>
 </head>
@@ -275,15 +281,16 @@ table {
     <dialog id="settings-dialog">
         <section>
             <h2>グラフ</h2>
-            MIN: <input type="number" min="0" max="3000" value="0" />
-            MAX: <input type="number" min="0" max="3000" value="1500" />
+            MIN: <input id="graph-min" type="number" min="0" max="3000" value="0" />
+            MAX: <input id="graph-max" type="number" min="0" max="3000" value="1500" />
             
         </section>
         <section>
             <h2>クリップボード</h2>
             <p>入力ダイアログ 確定時に 以下の並びでクリップボードにコピーします。</p>
             <p>用途: 外部スプレッドシートへの行貼付</p>
-            <input type="text" value="job,time,jw,w,rp,rank,totalRp,note" style="width:400px;color: black"/>
+            <input type="checkbox" id="enable-copy-to-clipboard" />
+            <input type="text" id="copy-rows" value="job,time,jw,w,rp,rank,totalRp,note" style="width:400px;"/>
         </section>
         <section>
             <h2>起動時設定</h2>
@@ -397,26 +404,33 @@ table {
         }
     });
 
+    const settingsUi = {
+        graphMin: document.getElementById("graph-min"),
+        graphMax: document.getElementById("graph-max"),
+        enableTourOnStart: document.getElementById("enable-tour-on-start"),
+        enableCopyToClipboard: document.getElementById("enable-copy-to-clipboard"),
+        copyRows: document.getElementById("copy-rows"),
+    };
 
     const dlg = {
         input: document.getElementById("gameDialog"),
         graph: document.getElementById("graph-dialog"),
         settings: document.getElementById("settings-dialog"),
-    }
+    };
     const btn = {
         input: document.getElementById("btn-show-dialog"),
         graph: document.getElementById("btn-show-graph"),
         popGraph: document.getElementById("btn-popout-graph"),
         settings: document.getElementById("btn-show-settings"),
-    }
+    };
     btn.input.addEventListener('click', () => {
 
         openModalDialog()
-    })
+    });
     btn.graph.addEventListener('click', () => {
         renderChart();
         dlg.graph.showModal()
-    })
+    });
     btn.popGraph.addEventListener('click', () => {
         window.open('graph.html', 'rucksack-graph');
     });
@@ -434,6 +448,30 @@ table {
         // クリックされた要素がdialog自身であるか判定
         if (event.target === dlg.settings) {
             dlg.settings.close();
+        }
+    });
+    
+    const _conv_input_to_settings = {
+        graphMin: (el) => Number(el.value),
+        graphMax: (el) => Number(el.value),
+        copyRows: (el) => el.value.split(","),
+        enableCopyToClipboard: (el) => el.checked,
+        enableTourOnStart: (el) => el.checked,
+    }
+
+    function isEq(a, b) {
+        const keys = Object.keys(a).sort();
+        return JSON.stringify(a, keys) == JSON.stringify(b, keys);
+    }
+
+    dlg.settings.addEventListener('close', (event) => {
+        const data = Object.fromEntries(
+            Object.entries(settingsUi).map(([k,v]) => [k, _conv_input_to_settings[k](v)])
+        );
+        if (!isEq(data, settings.clone())) {
+            settings.update(data);
+
+            // TODO: rerender page
         }
     });
     </script>

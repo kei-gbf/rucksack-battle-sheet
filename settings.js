@@ -19,9 +19,9 @@ class Settings {
 
         return new Proxy(this, {
             get(target, prop) {
-                console.log(`get ${target} ${prop}`)
+                // console.log(`get ${target} ${prop}`);
                 if (prop in target) {
-                    return target[prop];
+                    return target[prop].bind(target);
                 }
                 return target.#getValue(prop);
             },
@@ -48,12 +48,12 @@ class Settings {
     }
 
     #save() {
-        // console.log("settings SAVE");
+        console.log("settings SAVE");
         this.#storage.setItem(`${this.#prefix}/settings`,
             JSON.stringify(this.#values));
     }
     #load() {
-        // console.log("settings LOAD");
+        console.log("settings LOAD");
         const data = this.#storage.getItem(`${this.#prefix}/settings`);
         try {
             this.#values = JSON.parse(data ?? "");
@@ -61,13 +61,22 @@ class Settings {
             this.#reset();
         }
     }
+
+    update(data) {
+        this.#values = {...this.#values, ...data};
+        this.#save();
+    }
+
+    clone() {
+        return {...this.#values, ...this.#defaults};
+    }
 }
 
 const settings = new Settings({
     defaults: {
         graphMin: 0,
         graphMax: 1200,
-        enableTourOnStartup: true,
+        enableTourOnStart: true,
         enableCopyToClipboard: false,
         copyRows: ["job", "time", "jw", "w", "rp", "rank", "totalRp", "note"],
     }
