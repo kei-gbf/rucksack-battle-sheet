@@ -4,6 +4,30 @@
 // TODO: show tour guide (generate from list of steps)
 // 
 
+function createLabelCheckbox(message) {
+    const label = document.createElement('label');
+    label.style.display = 'block';
+    label.style.marginTop = '10px';
+    label.style.fontSize = '12px';
+    
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.style.marginRight = '5px';
+    
+    checkbox.addEventListener('change', (e) => {
+    if (e.target.checked) {
+        localStorage.setItem(STORAGE_KEY, 'true');
+    } else {
+        localStorage.removeItem(STORAGE_KEY);
+    }
+    });
+
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(message));
+
+    return label;
+}
+
 
 const siteTour = {
     showProgress: true,
@@ -47,6 +71,8 @@ const siteTour = {
     ]
 };
 
+// TODO: localStorage flag enableWelcomeTour
+
 // Site tour
 // const driverObj = driver.js.driver()
 0 && driverObj.highlight({
@@ -57,31 +83,13 @@ const siteTour = {
         onPopoverRender: (popover, { config, state }) => {
             const footer = popover.wrapper.querySelector('.driver-popover-footer');
             const description = popover.wrapper.querySelector('.driver-popover-description');
-            console.log(description)
             
             // チェックボックス用ラベルを作成
-            const label = document.createElement('label');
-            label.style.display = 'block';
-            label.style.marginTop = '10px';
-            label.style.fontSize = '12px';
-            
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.style.marginRight = '5px';
-            
-            checkbox.addEventListener('change', (e) => {
-            if (e.target.checked) {
-                localStorage.setItem(STORAGE_KEY, 'true');
-            } else {
-                localStorage.removeItem(STORAGE_KEY);
-            }
-            });
+            const label = createLabelCheckbox(' 次回以降表示しない');
 
-            label.appendChild(checkbox);
-            label.appendChild(document.createTextNode(' 次回以降表示しない'));
             // footer.prepend(label); // ボタンエリアの上に追加
             // label.after(description) // XXX: label is not mounted on DOM yet
-            popover.wrapper.appendChild(label)
+            popover.wrapper.appendChild(label);
 
         }
     }

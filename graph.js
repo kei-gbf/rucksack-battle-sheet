@@ -13,7 +13,11 @@ async function renderChart() {
 
 
     const records = await db.records.toArray();
-    const data = records.map(r => (r.rank === 'S') ? (r.totalRp || 0) + 400 : (r.totalRp || 0));
+
+    const data = records.map(r => [0,100,300,600,1000]["DCBAS".indexOf(r.rank)] + r.totalRp)
+
+    // const data = records.map(r => (r.rank === 'S') ? (r.totalRp || 0) + 400 : (r.totalRp || 0));
+    
     const dataJw = records.map(r => r.jw);
 
 
@@ -76,13 +80,13 @@ async function renderChart() {
                     annotations: {
                         line1: {
                             type: 'line',
-                            yMin: 400, yMax: 400,
+                            yMin: 1000, yMax: 1000,
                             borderColor: '#58a6ff',
                             borderWidth: 1,
                             borderDash: [4, 4],
                             label: { 
                                 display: true, 
-                                content: 'RANK UP', 
+                                content: 'S RANK', 
                                 backgroundColor: 'transparent',
                                 color: '#58a6ff',
                                 position: 'start'
@@ -93,10 +97,12 @@ async function renderChart() {
             },
             scales: {
                 y: {
-                    min: 250, max: 600,
+                    // min: 250, max: 600,
+                    min: 0, max: 1500,
                     ticks: { 
                         color: '#8b949e',
-                        callback: value => (value <= 400 ? `A ${value}` : `S ${value - 400}`)
+                        stepSize: 100,
+                        callback: value => (value >= 1000 ? `S ${value - 1000}` : (value >= 600) ? `A ${value - 600}` : (value >= 300) ? `B ${value - 300}` : (value >= 100) ? `C ${value - 100}` : `D ${value}`)
                     },
                     grid: { color: '#30363d' }
                 },
