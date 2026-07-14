@@ -417,23 +417,27 @@ table {
         graph: document.getElementById("graph-dialog"),
         settings: document.getElementById("settings-dialog"),
     };
+
     const btn = {
         input: document.getElementById("btn-show-dialog"),
         graph: document.getElementById("btn-show-graph"),
         popGraph: document.getElementById("btn-popout-graph"),
         settings: document.getElementById("btn-show-settings"),
     };
-    btn.input.addEventListener('click', () => {
 
+    btn.input.addEventListener('click', () => {
         openModalDialog()
     });
+
     btn.graph.addEventListener('click', () => {
         renderChart();
         dlg.graph.showModal()
     });
+
     btn.popGraph.addEventListener('click', () => {
         window.open('graph.html', 'rucksack-graph');
     });
+
     btn.settings.addEventListener('click', () => {
         dlg.settings.showModal();
     })
@@ -444,6 +448,7 @@ table {
             dlg.graph.close();
         }
     });
+
     dlg.settings.addEventListener('click', (event) => {
         // クリックされた要素がdialog自身であるか判定
         if (event.target === dlg.settings) {
