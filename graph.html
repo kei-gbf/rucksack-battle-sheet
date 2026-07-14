@@ -17,14 +17,10 @@
 <body>
     <graph-chart></graph-chart>
 
+<script src="./settings.js"></script>
+<script src="./db.js"></script>
 <script src="./graph.js"></script>
 <script>
-
-// NOTE: should be singleton
-const db = new Dexie("RankMatchDB");
-db.version(1).stores({ records: "++id, job, time, jw, w, rp, rank, totalRp, note" });
-
-
 
 renderChart();
 

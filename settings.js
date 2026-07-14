@@ -6,18 +6,15 @@ class Settings {
     #defaults = {};
     #prefix = "";
     #storage = localStorage;
-    #reserved = new Set();
 
     constructor({
         storage = localStorage,
         prefix = "rucksack-battle-sheet.github.io",
         defaults = {},
     } = {}) {
-        this.#values = {};
         this.#defaults = defaults;
         this.#prefix = prefix;
         this.#storage = storage;
-        this.#reserved = new Set(Object.getOwnPropertyNames(this));
         this.#load();
 
         return new Proxy(this, {
@@ -42,35 +39,38 @@ class Settings {
     }
 
     #setValue(prop, value) {
-        
         this.#values[prop] = value;
         this.#save();
     }
 
-    #save() {
-        console.log("settings SAVE");
-        this.#storage.setItem(`${this.#prefix}/settings`,
-            JSON.stringify(this.#values)
-        )
+    #reset() {
+        this.#values = {};
+    }
 
+    #save() {
+        // console.log("settings SAVE");
+        this.#storage.setItem(`${this.#prefix}/settings`,
+            JSON.stringify(this.#values));
     }
     #load() {
-        console.log("settings LOAD");
+        // console.log("settings LOAD");
         const data = this.#storage.getItem(`${this.#prefix}/settings`);
         try {
             this.#values = JSON.parse(data ?? "");
         } catch {
-            this.#values = {};
+            this.#reset();
         }
-
-        console.log(this.#values)
     }
 }
 
-const s = new Settings({
+const settings = new Settings({
     defaults: {
-        foo: 10,
+        graphMin: 0,
+        graphMax: 1200,
+        enableTourOnStartup: true,
+        enableCopyToClipboard: false,
+        copyRows: ["job", "time", "jw", "w", "rp", "rank", "totalRp", "note"],
     }
 });
-console.log(s)
-console.log(s.foo)
+
+const DBNAME = "RankMatchDB";

@@ -136,16 +136,13 @@ async function changePage(direction, num) {
 ui.nextBtn.addEventListener('click', async (e) => {
     // console.log("NEXT", state);
     await changePage("next", PAGESIZE);
-})
+});
 
 ui.prevBtn.addEventListener('click', async (e) => {
     // console.log("PREV", state);
     await changePage("prev", PAGESIZE);
-})
+});
 
-
-const db = new Dexie("RankMatchDB");
-db.version(1).stores({ records: "++id, job, time, jw, w, rp, rank, totalRp, note" });
 const jobs = ["ベルセルク", "クリュサオル", "シールド・スウォーン", "マナダイバー", "カオス・ルーダー", "黒猫導士", "エリュシオン", "ランバー・ジャック", "ライジング・フォース"];
 
 async function resetRecord(force=false) {

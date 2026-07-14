@@ -97,8 +97,8 @@ async function renderChart() {
             },
             scales: {
                 y: {
-                    // min: 250, max: 600,
-                    min: 0, max: 1500,
+                    min: settings.graphMin,
+                    max: settings.graphMax,
                     ticks: { 
                         color: '#8b949e',
                         stepSize: 100,
