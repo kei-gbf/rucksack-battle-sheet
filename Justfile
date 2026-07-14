@@ -1,8 +1,13 @@
 set shell := ["cmd.exe", "/c"]
 
+destDir := '..\..\public_html\rucksack-battle'
+
 copy:
-    copy index.html ..\..\public_html\rucksack-battle
+    copy index.html {{destDir}}
 
     
 copy-graph-js:
-    copy graph.js ..\..\public_html\rucksack-battle
+    copy graph.js {{destDir}}
+
+copy-settings-js:
+    copy settings.js {{destDir}}

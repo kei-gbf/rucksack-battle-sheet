@@ -184,12 +184,19 @@ table {
             <path d="M3 3v18h18M7 16l4-4 4 4 4-8" />
           </svg>
         </button>
-        <a href="graph.html" class="icon-btn" title="外部でグラフを開く" target="rucksack-graph">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+            <!--
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
             <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
           </svg>
-        </a>
+        -->
+
+        <button id="btn-show-settings" class="icon-btn" title="設定を開く (S)">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+        </button>
       </nav>
     </header>
 
@@ -241,18 +248,54 @@ table {
         <tbody></tbody>
     </table>
 
+    <script src="./settings.js"></script>
     <script src="./main.js"></script>
 
     <!-- グラフ -->
     <script src="./graph.js"></script>
     <dialog id="graph-dialog">
     <div>
+        <button id="btn-popout-graph" class="icon-btn" title="別ウィンドウで開く" style="margin: 0; transform: translate(5px, -5px)">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+        </button>
         <div class="chart-container">
             <canvas id="rankChart"></canvas>
             <canvas id="jobChart"></canvas>
         </div>
         <button onclick="document.getElementById('graph-dialog').close()">CLOSE</button>
     </div>
+    </dialog>
+
+    <!-- 設定ダイアログ -->
+    <dialog id="settings-dialog">
+        <section>
+            <h2>グラフ</h2>
+            MIN: <input type="number" min="0" max="3000" value="0" />
+            MAX: <input type="number" min="0" max="3000" value="1500" />
+            
+        </section>
+        <section>
+            <h2>クリップボード</h2>
+            <p>入力ダイアログ 確定時に 以下の並びでクリップボードにコピーします。</p>
+            <p>用途: 外部スプレッドシートへの行貼付</p>
+            <input type="text" value="job,time,jw,w,rp,rank,totalRp,note" style="width:400px;color: black"/>
+        </section>
+        <section>
+            <h2>起動時設定</h2>
+            <label for="enable-tour-on-start">
+                <input id="enable-tour-on-start" type="checkbox" />
+                案内ダイアログを表示する。
+
+            </label>
+        </section>
+        <section>
+            <h2>データベース削除</h2>
+            
+        </section>
     </dialog>
 
     <!-- 勝敗入力支援ダイアログ -->
@@ -309,12 +352,10 @@ table {
                 })();
             }
 
-
             ui.w.value = w;
             ui.jw.value = jw;
             stack.length = 0
         } 
-
     }
 
     document.addEventListener('keydown', (e) => {
@@ -359,10 +400,13 @@ table {
     const dlg = {
         input: document.getElementById("gameDialog"),
         graph: document.getElementById("graph-dialog"),
+        settings: document.getElementById("settings-dialog"),
     }
     const btn = {
         input: document.getElementById("btn-show-dialog"),
         graph: document.getElementById("btn-show-graph"),
+        popGraph: document.getElementById("btn-popout-graph"),
+        settings: document.getElementById("btn-show-settings"),
     }
     btn.input.addEventListener('click', () => {
 
@@ -372,11 +416,23 @@ table {
         renderChart();
         dlg.graph.showModal()
     })
+    btn.popGraph.addEventListener('click', () => {
+        window.open('graph.html', 'rucksack-graph');
+    });
+    btn.settings.addEventListener('click', () => {
+        dlg.settings.showModal();
+    })
 
     dlg.graph.addEventListener('click', (event) => {
         // クリックされた要素がdialog自身であるか判定
         if (event.target === dlg.graph) {
             dlg.graph.close();
+        }
+    });
+    dlg.settings.addEventListener('click', (event) => {
+        // クリックされた要素がdialog自身であるか判定
+        if (event.target === dlg.settings) {
+            dlg.settings.close();
         }
     });
     </script>
