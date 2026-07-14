@@ -127,7 +127,8 @@ table {
     }
 
     /* ::backdrop はダイアログの「外側」の背景です */
-    dialog#graph-dialog::backdrop { 
+    dialog#graph-dialog::backdrop,
+    dialog#settings-dialog::backdrop { 
         background: rgba(0, 0, 0, 0.4); /* 外側を少し暗くする */
         backdrop-filter: blur(4px);    /* すりガラス効果（対応ブラウザのみ） */
     }
@@ -164,11 +165,58 @@ table {
         margin-top: 10px;    /* グラフとの間隔 */
     }
 
+    #settings-dialog {
+        border-radius: 20px;
+    }
+
     #settings-dialog input {
         color: black;
     }
+    input[type="number"] {
+        text-align: right;
+    }
+
     #settings-dialog input:focus {
         border-color: black;
+    }
+
+
+    /* カードを縦1列に並べるコンテナ */
+    #settings-dialog > div.card-container {
+        display: flex;
+        flex-direction: column; /* 縦並びの指定 */
+        gap: 16px;              /* カード間の余白 */
+    }
+
+    /* カードのデザイン */
+    #settings-dialog > div.card-container > section.card {
+        padding: 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    #settings-dialog > div.card-container > section.card h2 {
+        margin: 0;
+        margin-bottom: 10px;
+    }
+
+    .card-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-top: 10px;
+    }
+    #btn-delete-database:disabled {
+        background-color: #aaa;
+    }
+
+    input#copy-rows {
+        padding-left: 5px;
+        background-color: #fff;
+    }
+    input#copy-rows:disabled {
+        background-color: #aaa;
     }
 
     </style>
@@ -278,38 +326,54 @@ table {
     </dialog>
 
     <!-- 設定ダイアログ -->
-    <dialog id="settings-dialog">
-        <section>
+    <dialog id="settings-dialog"><div class="card-container">
+        <section class="card">
             <h2>グラフ</h2>
-            MIN: <input id="graph-min" type="number" min="0" max="3000" value="0" />
-            MAX: <input id="graph-max" type="number" min="0" max="3000" value="1500" />
+            MIN: <input id="graph-min" type="number" min="0" max="3000" step="100" value="0" />
+            MAX: <input id="graph-max" type="number" min="0" max="3000" step="100" value="1500" />
             
         </section>
-        <section>
+        <section class="card">
             <h2>クリップボード</h2>
-            <p>入力ダイアログ 確定時に 以下の並びでクリップボードにコピーします。</p>
-            <p>用途: 外部スプレッドシートへの行貼付</p>
-            <input type="checkbox" id="enable-copy-to-clipboard" />
+            <label for="enable-copy-to-clipboard">
+                <p>入力ダイアログ 確定時に 以下の並びでクリップボードにコピーします。</p>
+                <p>用途: 外部スプレッドシートへの行貼付</p>
+                <input type="checkbox" id="enable-copy-to-clipboard" />
+            </label>
             <input type="text" id="copy-rows" value="job,time,jw,w,rp,rank,totalRp,note" style="width:400px;"/>
         </section>
-        <section>
+        <section class="card">
             <h2>起動時設定</h2>
             <label for="enable-tour-on-start">
                 <input id="enable-tour-on-start" type="checkbox" />
                 案内ダイアログを表示する。
-
             </label>
         </section>
-        <section>
+        <section class="card">
             <h2>データベース削除</h2>
-            
+            <div class="card-actions">
+                <p>誤操作防止の為「DELETE」と入力してください。</p>
+                <input type="text" id="confirm-delete-text" placeholder="DELETE" inputmode="latin" />
+                <button id="btn-delete-database" disabled>Delete</button>
+            </div>
         </section>
-    </dialog>
+    </div></dialog>
 
     <!-- 勝敗入力支援ダイアログ -->
     <script src="./modal-dialog.js"></script>
     <modal-dialog></modal-dialog>
     <script>
+  
+    const formUi = {   
+        job: document.getElementById('job'),
+        time: document.getElementById('time'),
+        jw: document.getElementById('jw'),
+        w: document.getElementById('w'),
+        rp: document.getElementById('rp'),
+        rank: document.getElementById('rank'),
+        totalRp: document.getElementById('totalRp'),
+        note: document.getElementById('note')
+    };
 
     async function openModalDialog() {
         const res = await startGame();
@@ -362,7 +426,38 @@ table {
 
             ui.w.value = w;
             ui.jw.value = jw;
-            stack.length = 0
+            stack.length = 0;
+
+            if (settings.enableCopyToClipboard) {
+                const data = {
+                    job: formUi.job.value,
+                    time: formUi.time.value,
+                    jw: formUi.jw.value,
+                    w: formUi.w.value,
+                    rank: formUi.rank.value,
+                    totalRp: formUi.totalRp.value,
+                    note: formUi.note.value,
+                };
+                if (settings.copyRows) {
+                    const row = [...settings.copyRows.map(v => data[v] ?? '')];
+                    console.log(row)
+
+                    const htmlTable = [
+                        "<table><tbody><tr>",
+                        row.map(v => `<td>${v.trim()}</td>`).join(""),
+                        "</table></tbody></tr>",
+                    ].join("");
+                    const textTable = row.join("\t") + "\n";
+                    console.log(htmlTable)
+
+                    const item = new ClipboardItem({
+                        'text/html': new Blob([htmlTable], {type: 'text/html'}),
+                        'text/plain': new Blob([textTable], {type: 'text/plain'}),
+                    });
+                    await navigator.clipboard.write([item]);
+                    console.log("Copied to clipboard")
+                }
+            }
         } 
     }
 
@@ -411,6 +506,29 @@ table {
         enableCopyToClipboard: document.getElementById("enable-copy-to-clipboard"),
         copyRows: document.getElementById("copy-rows"),
     };
+    const input = {
+        confirmDelete: document.getElementById('confirm-delete-text'),
+    };
+    {
+        // TODO: data validation
+        settingsUi.graphMin.value = settings.graphMin;
+        settingsUi.graphMax.value = settings.graphMax;
+        settingsUi.enableCopyToClipboard.checked = settings.enableCopyToClipboard;
+        settingsUi.copyRows.value = settings.copyRows.join(",");
+        settingsUi.enableTourOnStart.checked = settings.enableTourOnStart;
+
+        
+        settingsUi.copyRows.disabled = !settingsUi.enableCopyToClipboard.checked;
+    };
+
+    input.confirmDelete.addEventListener('input', (e) => {
+       btn.deleteDB.disabled = !(e.target.value === "DELETE")
+
+        e.stopPropagation(); // avoid global keydown event
+    })
+    settingsUi.enableCopyToClipboard.addEventListener('input', (e) => {
+        settingsUi.copyRows.disabled = !e.target.checked;
+    });
 
     const dlg = {
         input: document.getElementById("gameDialog"),
@@ -423,7 +541,18 @@ table {
         graph: document.getElementById("btn-show-graph"),
         popGraph: document.getElementById("btn-popout-graph"),
         settings: document.getElementById("btn-show-settings"),
+
+        deleteDB: document.getElementById("btn-delete-database")
     };
+    
+    btn.deleteDB.addEventListener('click', async () => {
+        if (confirm("データを削除します。この操作は取り消しできません。")) {
+            // XXX: データベース自体の削除は、Dexie.delete(DBNAME)
+            // 以下は、内容のクリア。DB破棄後の対応が先に必要。データ読み出しがエラーになる為。
+            await db.records.clear();
+            render();
+        }
+    })
 
     btn.input.addEventListener('click', () => {
         openModalDialog()
@@ -440,22 +569,17 @@ table {
 
     btn.settings.addEventListener('click', () => {
         dlg.settings.showModal();
-    })
-
-    dlg.graph.addEventListener('click', (event) => {
-        // クリックされた要素がdialog自身であるか判定
-        if (event.target === dlg.graph) {
-            dlg.graph.close();
-        }
     });
 
-    dlg.settings.addEventListener('click', (event) => {
-        // クリックされた要素がdialog自身であるか判定
-        if (event.target === dlg.settings) {
-            dlg.settings.close();
-        }
+    [dlg.graph, dlg.settings].forEach(d => {
+        d.addEventListener('click', (event) => {
+            // クリックされた要素がdialog自身であるか判定
+            if (event.target === d) {
+                d.close();
+            }
+        });
     });
-    
+
     const _conv_input_to_settings = {
         graphMin: (el) => Number(el.value),
         graphMax: (el) => Number(el.value),

@@ -68,7 +68,7 @@ class Settings {
     }
 
     clone() {
-        return {...this.#values, ...this.#defaults};
+        return {...this.#defaults, ...this.#values};
     }
 }
 
