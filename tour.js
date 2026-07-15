@@ -13,10 +13,10 @@ function createLabelCheckbox(message, checked, func) {
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.style.marginRight = '5px';
-    checkbox.checked = checked;
+    checkbox.checked = !checked;
     
     checkbox.addEventListener('change', (e) => {
-        func(e.target.checked);
+        func(!e.target.checked);
     });
 
     label.appendChild(checkbox);
