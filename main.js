@@ -189,7 +189,7 @@ async function render() {
     }
     
     records.slice(state.offset, state.offset+PAGESIZE).forEach(r => {
-        tbody.innerHTML += `<tr class="${r.rp > 0 ? 'rp-w': r.rp < 0 ? 'rp-l' : 'rp-d'}"><td class="job job-${jobs.indexOf(r.job)+1}"><span>${r.job}</span></td><td>${r.time}</td><td>${r.jw} / ${r.w}</td><td class="col-rp">${r.rp}</td><td>${r.rank}</td><td>${r.totalRp}</td><td>${r.note}</td><td><button class="del-btn" onclick="deleteRecord(${r.id})">🗑️</button></td></tr>`;
+        tbody.innerHTML += `<tr class="${r.rp > 0 ? 'rp-w': r.rp < 0 ? 'rp-l' : 'rp-d'}"><td class="job job-${jobs.indexOf(r.job)+1}"><span>${r.job}</span></td><td>${r.time}</td><td>${r.jw} / ${r.w}</td><td class="col-rp">${r.rp}</td><td>${r.rank}</td><td>${r.totalRp}</td><td>${r.note}</td><td><button data-id="${r.id}" class="del-btn">🗑️</button></td></tr>`;
     });
 
     // for next page block page over
@@ -200,8 +200,9 @@ async function render() {
 
 async function deleteRecord(id) {
     if (!window.confirm(`削除確認: データを消去します: ${id}`)) return;
+
     await db.records.delete(id);
-    render();
+    await render();
 
     channel.postMessage({ action: 'RELOAD_CHARTS' });
 }

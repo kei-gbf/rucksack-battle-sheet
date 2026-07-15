@@ -253,6 +253,16 @@ table {
     <modal-dialog></modal-dialog>
 
     <script>
+
+
+    const table = document.getElementById('recordTable');
+    table.addEventListener('click', async (event) => {
+        if (event.target.classList.contains('del-btn')) {
+            const id = parseInt(event.target.dataset.id, 10);
+            await deleteRecord(id);
+            await render();
+        }
+    });
   
     const formUi = {   
         job: document.getElementById('job'),
@@ -485,7 +495,7 @@ table {
 
         // TODO: 通知
     
-        render();
+        await render();
     });
 
     btn.input.addEventListener('click', () => {

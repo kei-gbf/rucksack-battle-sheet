@@ -18,7 +18,7 @@ async function exportTableToCSV(table, fileName = 'export.csv') {
   }
 
   // 2. CSVヘッダーの作成 (オブジェクトのキーから取得)
-  const headers = Object.keys(data[0]);
+  const headers = Object.keys(data[0]).filter(x => x != "id");
   const csvRows = [];
   csvRows.push(headers.join(','));
 
@@ -63,35 +63,54 @@ async function importCSVToTable(event, table) {
   const file = event.target.files[0];
   if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = async (e) => {
-    const text = e.target.result;
-    const lines = text.split('\n').filter(line => line.trim() !== '');
-    
-    // ヘッダー行を取得
-    const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-    
-    // データ行をオブジェクト配列に変換
-    const items = lines.slice(1).map(line => {
-      // カンマ分割用の簡易パース（ダブルクォーテーション内カンマに対応）
-      const values = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g)
-                         .map(v => v.replace(/^"|"$/g, '').replace(/""/g, '"'));
-      
-      let item = {};
-      headers.forEach((header, index) => {
-        item[header] = values[index];
-      });
-      return item;
-    });
+  return new Promise((resolve) => {
 
-    try {
-      // 一括追加
-      await table.bulkAdd(items);
-      console.log(`${items.length} 件のデータをインポートしました！`);
-    } catch (err) {
-      console.error('インポートエラー:', err);
-      console.log('インポートに失敗しました。データ形式を確認してください。');
-    }
-  };
-  return reader.readAsText(file); // 文字コード等で化ける場合は encoding 指定が必要
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        const text = e.target.result;
+        const lines = text.split('\n').filter(line => line.trim() !== '');
+        
+        // ヘッダー行を取得
+        const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+        
+        // データ行をオブジェクト配列に変換
+        const items = lines.slice(1).map(line => {
+        // カンマ分割用の簡易パース（ダブルクォーテーション内カンマに対応）
+        const values = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g)
+                            .map(v => v.replace(/^"|"$/g, '').replace(/""/g, '"'));
+        
+        let item = {};
+        headers.forEach((header, index) => {
+            item[header] = values[index];
+        });
+        return item;
+        });
+
+        const _conv = (r) => ({
+            // id: Number(r.id),
+            rp: Number(r.rp),
+            totalRp: Number(r.totalRp),
+            jw: Number(r.jw),
+            w: Number(r.w),
+            rank: r.rank,
+            job: r.job,
+            note: r.note,
+            time: r.time,
+        });
+
+        try {
+        // 一括追加
+        // await table.bulkAdd(items);
+            for (const item of items.map(_conv)) {
+                await table.add(item);
+            }
+        console.log(`${items.length} 件のデータをインポートしました！`);
+        } catch (err) {
+        console.error('インポートエラー:', err);
+        console.log('インポートに失敗しました。データ形式を確認してください。');
+        }
+        resolve();
+    };
+    reader.readAsText(file); // 文字コード等で化ける場合は encoding 指定が必要
+  });
 }
