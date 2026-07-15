@@ -1,0 +1,85 @@
+/* グラフコンテナの調整 */
+.chart-container {
+    width: 100%;      /* 親の幅に合わせる */
+    max-width: 100%;  /* ダイアログからはみ出さないように */
+    margin: 10px auto;
+    background: #161b22;
+    padding: 15px;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;        /* Canvas間のスペース */
+}
+
+/* Canvasのサイズ制御（重要） */
+.chart-container canvas {
+    width: 100% !important; /* コンテナの幅いっぱいに */
+    height: auto !important; /* アスペクト比を維持 */
+    max-height: 300px;       /* 高くなりすぎないように制限 */
+}
+
+/* ボタンを右寄せにするスタイル */
+#graph-dialog div {
+    display: flex;
+    flex-direction: column;
+}
+
+#graph-dialog div button {
+    align-self: flex-end; /* ボタンだけを右端に配置 */
+    margin-top: 10px;    /* グラフとの間隔 */
+}
+
+#settings-dialog {
+    border-radius: 20px;
+}
+
+#settings-dialog input {
+    color: black;
+}
+input[type="number"] {
+    text-align: right;
+}
+
+#settings-dialog input:focus {
+    border-color: black;
+}
+
+
+/* カードを縦1列に並べるコンテナ */
+#settings-dialog > div.card-container {
+    display: flex;
+    flex-direction: column; /* 縦並びの指定 */
+    gap: 16px;              /* カード間の余白 */
+}
+
+/* カードのデザイン */
+#settings-dialog > div.card-container > section.card {
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#settings-dialog > div.card-container > section.card h2 {
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.card-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 10px;
+}
+#btn-delete-database:disabled {
+    background-color: #aaa;
+}
+
+input#copy-rows {
+    padding-left: 5px;
+    background-color: #fff;
+}
+input#copy-rows:disabled {
+    background-color: #aaa;
+}
