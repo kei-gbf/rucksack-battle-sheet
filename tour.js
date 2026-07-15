@@ -16,7 +16,7 @@ function createLabelCheckbox(message, checked, func) {
     checkbox.checked = !checked;
     
     checkbox.addEventListener('change', (e) => {
-        func(!e.target.checked);
+        func(e.target.checked);
     });
 
     label.appendChild(checkbox);
@@ -211,7 +211,7 @@ const welcomPopover = {
                 settings.enableTourOnStart,
                 (checked) => {
                 settings.update({
-                    enableTourOnStart: checked
+                    enableTourOnStart: !checked
                 });
                 updateSettingsDialog();
             });
