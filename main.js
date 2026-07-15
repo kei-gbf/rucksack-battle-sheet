@@ -13,11 +13,11 @@ const ui = {
 
     job: document.getElementById('job'),
     time: document.getElementById('time'),
-    jw: document.getElementById('jw'),
-    w: document.getElementById('w'),
-    rp: document.getElementById('rp'),
+    jobwin: document.getElementById('jobwin'),
+    win: document.getElementById('win'),
+    score: document.getElementById('score'),
     rank: document.getElementById('rank'),
-    totalRp: document.getElementById('totalRp'),
+    point: document.getElementById('point'),
     note: document.getElementById('note'),
 };
 
@@ -160,11 +160,11 @@ async function saveRecord() {
     await db.records.add({
         job: document.getElementById('job').value,
         time: document.getElementById('time').value,
-        jw: parseInt(document.getElementById('jw').value) || 0,
-        w: parseInt(document.getElementById('w').value) || 0,
-        rp: parseInt(document.getElementById('rp').value) || 0,
+        jobwin: parseInt(document.getElementById('jobwin').value) || 0,
+        win: parseInt(document.getElementById('win').value) || 0,
+        score: parseInt(document.getElementById('score').value) || 0,
         rank: document.getElementById('rank').value,
-        totalRp: parseInt(document.getElementById('totalRp').value) || 0,
+        score: parseInt(document.getElementById('score').value) || 0,
         note: document.getElementById('note').value
     });
     render();
@@ -183,13 +183,13 @@ async function render() {
     const dash = document.getElementById('dashboard');
     dash.innerHTML = '';
     for (let jobName of jobs) {
-        const totalJw = records.filter(r => r.job === jobName).reduce((sum, r) => sum + r.jw, 0);
+        const totalJw = records.filter(r => r.job === jobName).reduce((sum, r) => sum + r.jobwin, 0);
         const val = Math.min(10 + totalJw, 50);
         dash.innerHTML += `<div class="meter-box">${jobName}: ${val}<meter value="${val}" min="0" max="50"></meter></div>`;
     }
     
     records.slice(state.offset, state.offset+PAGESIZE).forEach(r => {
-        tbody.innerHTML += `<tr class="${r.rp > 0 ? 'rp-w': r.rp < 0 ? 'rp-l' : 'rp-d'}"><td class="job job-${jobs.indexOf(r.job)+1}"><span>${r.job}</span></td><td>${r.time}</td><td>${r.jw} / ${r.w}</td><td class="col-rp">${r.rp}</td><td>${r.rank}</td><td>${r.totalRp}</td><td>${r.note}</td><td><button data-id="${r.id}" class="del-btn">🗑️</button></td></tr>`;
+        tbody.innerHTML += `<tr class="${r.score > 0 ? 'score-w': r.score < 0 ? 'score-l' : 'score-d'}"><td class="job job-${jobs.indexOf(r.job)+1}"><span>${r.job}</span></td><td>${r.time}</td><td>${r.jobwin} / ${r.win}</td><td class="col-score">${r.score}</td><td>${r.rank}</td><td>${r.point}</td><td>${r.note}</td><td><button data-id="${r.id}" class="del-btn">🗑️</button></td></tr>`;
     });
 
     // for next page block page over
@@ -213,8 +213,8 @@ document.addEventListener('wheel', (e) => {
     if (e.target.type === 'number') { 
         e.preventDefault(); 
         let val = (parseFloat(e.target.value) || 0) + (e.deltaY > 0 ? -1 : 1);
-        // RP欄以外は0未満にならないように制限
-        if (e.target.id !== 'rp' && e.target.id !== 'totalRp') {
+        // score, point 欄以外は0未満にならないように制限
+        if (e.target.id !== 'score' && e.target.id !== 'point') {
             val = Math.max(0, val);
         }
         e.target.value = val;

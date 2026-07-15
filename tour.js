@@ -105,19 +105,19 @@ const _siteTourSteps = [
         description: '開始時間を想定。<br>連戦想定なので、記録時に現在時間が次の開始時間として設定されます。<br>日付は記録しません。直近の頻度確認。',
         }
     },
-    { element: '.form-group #jw',
+    { element: '.form-group #jobwin',
         popover: {
         title: '入力欄: ジョブ変後の勝利数',
         description: '入力ダイアログにより自動入力。<br>データの手動調整が必要な場合は、手入力でマイナスも出来ます。',
         }
     },
-    { element: '.form-group #w',
+    { element: '.form-group #win',
         popover: {
         title: '入力欄: トータル勝利数',
         description: '',
         }
     },
-    { element: '.form-group #rp',
+    { element: '.form-group #score',
         popover: {
         title: '入力欄: 獲得ポイント',
         description: '個々の収支を実質の勝敗として 赤緑 表記を振り分けます。',
@@ -129,7 +129,7 @@ const _siteTourSteps = [
         description: 'マッチ後の現在ランク',
         }
     },
-    { element: '.form-group #totalRp',
+    { element: '.form-group #point',
         popover: {
         title: '入力欄: ランクポイント',
         description: 'マッチ後の最終ポイント',

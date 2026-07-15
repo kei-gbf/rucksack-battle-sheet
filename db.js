@@ -2,6 +2,22 @@ const db = new Dexie(DBNAME);
 
 db.version(1).stores({ records: "++id, job, time, jw, w, rp, rank, totalRp, note" });
 
+db.version(2).stores({
+  records: "++id, job, jobwin, win, score, rank, point, note"
+}).upgrade(tx => {
+  // version(2) でリネームと役割の明確化
+  return tx.table('records').toCollection().modify(record => {
+    record.jobwin = record.jw;
+    record.win = record.w;
+    record.point = record.totalRp;
+    record.score = record.rp; // rp から score へ
+
+    delete record.jw;
+    delete record.w;
+    delete record.totalRp;
+    delete record.rp;
+  });
+});
 
 
 /**
@@ -73,6 +89,8 @@ async function importCSVToTable(event, table) {
         // ヘッダー行を取得
         const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
         
+        // XXX: 
+
         // データ行をオブジェクト配列に変換
         const items = lines.slice(1).map(line => {
         // カンマ分割用の簡易パース（ダブルクォーテーション内カンマに対応）
@@ -88,10 +106,10 @@ async function importCSVToTable(event, table) {
 
         const _conv = (r) => ({
             // id: Number(r.id),
-            rp: Number(r.rp),
-            totalRp: Number(r.totalRp),
-            jw: Number(r.jw),
-            w: Number(r.w),
+            score: Number(r.score),
+            point: Number(r.point),
+            jobwin: Number(r.jobwin),
+            win: Number(r.win),
             rank: r.rank,
             job: r.job,
             note: r.note,

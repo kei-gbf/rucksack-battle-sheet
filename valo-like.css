@@ -60,18 +60,18 @@
     td { padding: 15px 12px; border-bottom: 1px solid #2a3439; text-align: center; }
     
     /* 勝利/敗北のスタイル */
-    tr.rp-w { border-left: 4px solid var(--accent-win); background: rgba(70, 255, 172, 0.05); }
-    tr.rp-l { border-left: 4px solid var(--accent-lose); background: rgba(255, 70, 85, 0.05); }
-    tr.rp-w:hover { border-left: 4px solid var(--accent-win); background: rgba(70, 255, 172, 0.6); }
-    tr.rp-l:hover { border-left: 4px solid var(--accent-lose); background: rgba(255, 70, 85, 0.6); }
+    tr.score-w { border-left: 4px solid var(--accent-win); background: rgba(70, 255, 172, 0.05); }
+    tr.score-l { border-left: 4px solid var(--accent-lose); background: rgba(255, 70, 85, 0.05); }
+    tr.score-w:hover { border-left: 4px solid var(--accent-win); background: rgba(70, 255, 172, 0.6); }
+    tr.score-l:hover { border-left: 4px solid var(--accent-lose); background: rgba(255, 70, 85, 0.6); }
 
-    tr.rp-w .col-rp { color: rgba(70, 255, 172, 0.9); }
-    tr.rp-l .col-rp { color: rgba(255, 70, 85, 0.9); }
+    tr.score-w .col-score { color: rgba(70, 255, 172, 0.9); }
+    tr.score-l .col-score { color: rgba(255, 70, 85, 0.9); }
 
 
-    tr.rp-d { border-left: 4px solid var(--accent-draw); background: rgba(188, 128, 135, 0.05); }
-    tr.rp-d:hover { border-left: 4px solid var(--accent-draw); background: rgba(188, 128, 135, 0.05); }
-    tr.rp-d .col-rp { color: rgba(188, 128, 135, 0.09); }
+    tr.score-d { border-left: 4px solid var(--accent-draw); background: rgba(188, 128, 135, 0.05); }
+    tr.score-d:hover { border-left: 4px solid var(--accent-draw); background: rgba(188, 128, 135, 0.05); }
+    tr.score-d .col-score { color: rgba(188, 128, 135, 0.09); }
 
     
     .status { font-weight: bold; }

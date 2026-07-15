@@ -14,11 +14,9 @@ async function renderChart() {
 
     const records = await db.records.toArray();
 
-    const data = records.map(r => [0,100,300,600,1000]["DCBAS".indexOf(r.rank)] + r.totalRp)
-
-    // const data = records.map(r => (r.rank === 'S') ? (r.totalRp || 0) + 400 : (r.totalRp || 0));
+    const data = records.map(r => [0,100,300,600,1000]["DCBAS".indexOf(r.rank)] + r.point)
     
-    const dataJw = records.map(r => r.jw);
+    const dataJobwin = records.map(r => r.jobwin);
 
 
 
@@ -26,9 +24,9 @@ async function renderChart() {
     const jobStats = records.reduce((acc, r) => {
         if (!acc[r.job]) acc[r.job] = { wins: 0, draws: 0, losses: 0 };
             
-        if (r.rp > 0) {
+        if (r.score > 0) {
             acc[r.job].wins++;
-        } else if (r.rp < 0) {
+        } else if (r.score < 0) {
             acc[r.job].losses++;
         } else {
             acc[r.job].draws++; // RP増減なしをドローと定義
@@ -65,7 +63,7 @@ async function renderChart() {
                 {
                     label: 'JW Count',
                     type: 'bar', // 棒グラフ
-                    data: dataJw,
+                    data: dataJobwin,
                     backgroundColor: 'rgba(0, 212, 255, 0.3)', // 薄い水色
                     yAxisID: 'y1'
                 }

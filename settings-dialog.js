@@ -32,7 +32,7 @@ class SettingDialogElement extends HTMLElement {
                         <p>用途: 外部スプレッドシートへの行貼付</p>
                         <input type="checkbox" id="enable-copy-to-clipboard" />
                     </label>
-                    <input type="text" id="copy-rows" value="job,time,jw,w,rp,rank,totalRp,note" style="width:400px;"/>
+                    <input type="text" id="copy-rows" value="job,time,jobwin,win,score,rank,point,note" style="width:400px;"/>
                 </section>
                 <section class="card">
                     <h2>起動時設定</h2>

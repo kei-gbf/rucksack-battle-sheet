@@ -78,7 +78,7 @@ const settings = new Settings({
         graphMax: 1200,
         enableTourOnStart: true,
         enableCopyToClipboard: false,
-        copyRows: ["job", "time", "jw", "w", "rp", "rank", "totalRp", "note"],
+        copyRows: ["job", "time", "jobwin", "win", "score", "rank", "point", "note"],
     }
 });
 

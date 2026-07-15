@@ -87,10 +87,10 @@ table {
 
 .col-job      { width: 18%; }
 .col-time     { width: 60px; }
-.col-jww      { width: 60px; }
-.col-rp       { width: 70px; }
+.col-win      { width: 60px; }
+.col-score       { width: 70px; }
 .col-rank     { width: 55px; }
-.col-final-rp { width: 70px; }
+.col-final-point { width: 70px; }
 .col-delete   { width: 55px; }
 
 /* 残り全部を備考へ */
@@ -180,15 +180,15 @@ table {
             <option>エリュシオン</option><option>ランバー・ジャック</option><option>ライジング・フォース</option>
         </select>
         <input type="time" id="time">
-        <input type="number" id="jw" placeholder="JW" style="width: 40px;" min="0">
+        <input type="number" id="jobwin" placeholder="JW" style="width: 40px;" min="0">
         <span style="font-weight: bold;">/</span>
-        <input type="number" id="w" placeholder="W" style="width: 40px;" min="0">
+        <input type="number" id="win" placeholder="W" style="width: 40px;" min="0">
         
-        <input type="number" id="rp" placeholder="獲得RP" style="width: 60px;">
+        <input type="number" id="score" placeholder="獲得" style="width: 60px;">
         <select id="rank">
             <option value="S">S</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
         </select>
-        <input type="number" id="totalRp" placeholder="最終RP" style="width: 60px;">
+        <input type="number" id="point" placeholder="最終RP" style="width: 60px;">
         <input type="text" id="note" placeholder="備考" style="width: 100px;">
         <button class="add-btn" onclick="saveRecord()">記録</button>
         <button class="reset-btn" onclick="resetRecord()">取消</button>
@@ -205,10 +205,10 @@ table {
         <colgroup>
             <col class="col-job">
             <col class="col-time">
-            <col class="col-jww">
-            <col class="col-rp">
+            <col class="col-win">
+            <col class="col-score">
             <col class="col-rank">
-            <col class="col-final-rp">
+            <col class="col-final-point">
             <col class="col-note">
             <col class="col-delete">
         </colgroup>
@@ -267,11 +267,11 @@ table {
     const formUi = {   
         job: document.getElementById('job'),
         time: document.getElementById('time'),
-        jw: document.getElementById('jw'),
-        w: document.getElementById('w'),
-        rp: document.getElementById('rp'),
+        jobwin: document.getElementById('jobwin'),
+        win: document.getElementById('win'),
+        score: document.getElementById('score'),
         rank: document.getElementById('rank'),
-        totalRp: document.getElementById('totalRp'),
+        point: document.getElementById('point'),
         note: document.getElementById('note')
     };
 
@@ -281,22 +281,16 @@ table {
         if (res.ok) {
             // NOTE: only support "A" and "S" rank point
             // console.log("結果:", res.stack);
-            const w = stack.filter(s => s === 'win').length;
-            const l = stack.filter(s => s === 'lose').length;
-            const jw = stack.slice(5-1).filter(s => s === 'win').length;
-            const r = await db.records.orderBy(':id').reverse().first() ?? { rank: "D", totalRp: 0 };
+            const win = stack.filter(s => s === 'win').length;
+            const lose = stack.filter(s => s === 'lose').length;
+            const jobwin = stack.slice(5-1).filter(s => s === 'win').length;
+            const r = await db.records.orderBy(':id').reverse().first() ?? { rank: "D", point: 0 };
 
-            const rp = (3 * w) - {D: 0, C: 4, B: 6, A: 10, S: 14}[r.rank] + (w == 10 ? ((5-l)*5) : 0);;
+            const score = (3 * w) - {D: 0, C: 4, B: 6, A: 10, S: 14}[r.rank] + (win == 10 ? ((5-lose)*5) : 0);;
 
             // TODO: bisect
-            if (0) {
-                const total = r.totalRp + {A: 0, S: 400}[r.rank] + rp;
-                ui.rp.value = rp;
-                ui.rank.value = (total >= 400) ? "S" : "A";
-                ui.totalRp.value = (total >= 400) ? total%400 : total;
-            }
-            else {
-                (() => {
+
+            {
                 // 累積ボーダーの定義
                 // D: 0~99, C: 100~299, B: 300~599, A: 600~999, S: 1000~
                 const RANK_CONFIG = [
@@ -310,7 +304,7 @@ table {
                 // 1. 現在のランク位置を累積ポイントとして計算
                 // 例: 現在 A(600開始) で 399pt なら totalは 999
                 const currentBase = RANK_CONFIG.find(c => c.rank === r.rank).min;
-                const totalGlobal = currentBase + r.totalRp + rp;
+                const totalGlobal = currentBase + r.point + score;
 
                 // 2. 二分探索（または単純なfindIndex）でランクを決定
                 // ランクが増えてもここを二分探索に差し替えるだけでO(log N)になる
@@ -318,24 +312,23 @@ table {
                 const result = RANK_CONFIG[index];
 
                 // 3. 値の適用
-                ui.rp.value = rp;
+                ui.score.value = score;
                 ui.rank.value = result.rank;
-                ui.totalRp.value = totalGlobal - result.min;
-                })();
+                ui.point.value = totalGlobal - result.min;
             }
 
-            ui.w.value = w;
-            ui.jw.value = jw;
+            ui.win.value = win;
+            ui.jobwin.value = jobwin;
             stack.length = 0;
 
             if (settings.enableCopyToClipboard) {
                 const data = {
                     job: formUi.job.value,
                     time: formUi.time.value,
-                    jw: formUi.jw.value,
-                    w: formUi.w.value,
+                    jobwin: formUi.jobwin.value,
+                    win: formUi.win.value,
                     rank: formUi.rank.value,
-                    totalRp: formUi.totalRp.value,
+                    point: formUi.point.value,
                     note: formUi.note.value,
                 };
                 if (settings.copyRows) {
