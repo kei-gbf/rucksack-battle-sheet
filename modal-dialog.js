@@ -50,6 +50,12 @@ function startGame() {
 
     const dialog = document.getElementById('gameDialog');
     dialog.showModal();
+
+
+    if (driverObj.isActive()) {
+        driverObj.moveNext()
+    }
+
     return new Promise((resolve) => { 
         dialog.addEventListener('close', (e) => {
             const ok = dialog.returnValue === 'ok';

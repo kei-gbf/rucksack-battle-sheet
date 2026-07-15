@@ -38,7 +38,7 @@ class SettingDialogElement extends HTMLElement {
                     <h2>起動時設定</h2>
                     <label for="enable-tour-on-start">
                         <input id="enable-tour-on-start" type="checkbox" />
-                        案内ダイアログを表示する。
+                        使い方の案内ダイアログを表示する。
                     </label>
                 </section>
                 <section class="card">

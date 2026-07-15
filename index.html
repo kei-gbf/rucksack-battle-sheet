@@ -221,7 +221,6 @@ table {
     <script src="./settings.js"></script>
     <script src="./db.js"></script>
     <script src="./main.js"></script>
-    <script src="./tour.js"></script>
 
     <!-- グラフ -->
     <script src="./graph.js"></script>
@@ -347,6 +346,10 @@ table {
                     console.log("Copied to clipboard")
                 }
             }
+
+            if (driverObj.isActive()) {
+                driverObj.moveNext();
+            }
         } 
     }
 
@@ -369,6 +372,13 @@ table {
                 dlg.input.close();
             } else {
                 openModalDialog()
+            }
+            break;
+        case 's':
+            if (dlg.settings.open) {
+                dlg.settings.close();
+            } else {
+                dlg.settings.showModal();
             }
             break;
         case 'PageUp':
@@ -398,7 +408,7 @@ table {
     const input = {
         confirmDelete: document.getElementById('confirm-delete-text'),
     };
-    {
+    function updateSettingsDialog(){
         // TODO: data validation
         settingsUi.graphMin.value = settings.graphMin;
         settingsUi.graphMax.value = settings.graphMax;
@@ -406,9 +416,9 @@ table {
         settingsUi.copyRows.value = settings.copyRows.join(",");
         settingsUi.enableTourOnStart.checked = settings.enableTourOnStart;
 
-        
         settingsUi.copyRows.disabled = !settingsUi.enableCopyToClipboard.checked;
     };
+    updateSettingsDialog();
 
     input.confirmDelete.addEventListener('input', (e) => {
        btn.deleteDB.disabled = !(e.target.value === "DELETE")
@@ -426,6 +436,9 @@ table {
     };
 
     const btn = {
+        add: document.querySelector(".add-btn"),
+        reset: document.querySelector(".reset-btn"),
+
         input: document.getElementById("btn-show-dialog"),
         graph: document.getElementById("btn-show-graph"),
         popGraph: document.getElementById("btn-popout-graph"),
@@ -433,6 +446,12 @@ table {
 
         deleteDB: document.getElementById("btn-delete-database")
     };
+    console.log(btn)
+    btn.add.addEventListener('click', () => {
+        if (driverObj.isActive()) {
+            driverObj.moveNext();
+        }
+    })
     
     btn.deleteDB.addEventListener('click', async () => {
         if (confirm("データを削除します。この操作は取り消しできません。")) {
@@ -460,13 +479,28 @@ table {
         dlg.settings.showModal();
     });
 
-    [dlg.graph, dlg.settings].forEach(d => {
-        d.addEventListener('click', (event) => {
-            // クリックされた要素がdialog自身であるか判定
-            if (event.target === d) {
-                d.close();
-            }
-        });
+    dlg.settings.addEventListener('keydown', (e) => {
+        switch (e.target.type) {
+            case "text":
+            case "number":
+            case "checkbox":
+                // do not call global keydown hook
+                e.stopPropagation();
+                break;
+        }
+    });
+
+    dlg.graph.addEventListener('click', (event) => {
+        // クリックされた要素がdialog自身であるか判定
+        if (event.target === dlg.graph) {
+            dlg.graph.close();
+        }
+    });
+    dlg.settings.addEventListener('click', (event) => {
+        // クリックされた要素がdialog自身であるか判定
+        if (event.target === dlg.settings) {
+            dlg.settings.close();
+        }
     });
 
     const _conv_input_to_settings = {
@@ -493,5 +527,8 @@ table {
         }
     });
     </script>
+
+    <!-- 機能紹介 -->
+    <script src="./tour.js"></script>
 </body>
 </html>
