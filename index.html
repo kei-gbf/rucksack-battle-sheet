@@ -246,6 +246,8 @@ table {
     <settings-dialog></settings-dialog>
 
 
+    <div id="copy-tooltip">コピーしました！</div>
+
     <!-- 勝敗入力支援ダイアログ -->
     <script src="./modal-dialog.js"></script>
     <modal-dialog></modal-dialog>
@@ -343,7 +345,15 @@ table {
                         'text/plain': new Blob([textTable], {type: 'text/plain'}),
                     });
                     await navigator.clipboard.write([item]);
-                    console.log("Copied to clipboard")
+                    
+                    const tooltip = document.getElementById('copy-tooltip');
+                    if (tooltip) {
+                        tooltip.classList.add('tooltip-visible');
+                        // 2秒後に消す
+                        setTimeout(() => {
+                            tooltip.classList.remove('tooltip-visible');
+                        }, 2000);
+                    }
                 }
             }
 
@@ -406,6 +416,7 @@ table {
         copyRows: document.getElementById("copy-rows"),
     };
     const input = {
+        importFile: document.getElementById('import-csv-file'),
         confirmDelete: document.getElementById('confirm-delete-text'),
     };
     function updateSettingsDialog(){
@@ -444,9 +455,10 @@ table {
         popGraph: document.getElementById("btn-popout-graph"),
         settings: document.getElementById("btn-show-settings"),
 
-        deleteDB: document.getElementById("btn-delete-database")
+        deleteDB: document.getElementById("btn-delete-database"),
+        exportDB: document.getElementById("btn-export-database"),
+        importDB: document.getElementById("btn-import-database"),
     };
-    console.log(btn)
     btn.add.addEventListener('click', () => {
         if (driverObj.isActive()) {
             driverObj.moveNext();
@@ -460,7 +472,21 @@ table {
             await db.records.clear();
             render();
         }
-    })
+    });
+    btn.exportDB.addEventListener('click', async () => {
+        exportTableToCSV(db.records, 'rucksack-records.csv');
+    });
+    btn.importDB.addEventListener('click', () => {
+        input.importFile.click();
+    });
+    input.importFile.addEventListener('change', async (e) => {
+        await importCSVToTable(e, db.records);
+        dlg.settings.close();
+
+        // TODO: 通知
+    
+        render();
+    });
 
     btn.input.addEventListener('click', () => {
         openModalDialog()

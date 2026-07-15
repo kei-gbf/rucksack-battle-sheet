@@ -7,8 +7,8 @@ document.getElementById('openBtn')?.addEventListener('click', async () => {
     if (dialog) {
         dialog.showModal();
     }
-
 });
+
 
 class SettingDialogElement extends HTMLElement {
 
@@ -42,9 +42,18 @@ class SettingDialogElement extends HTMLElement {
                     </label>
                 </section>
                 <section class="card">
-                    <h2>データベース削除</h2>
+                    <h2>データベース管理</h2>
                     <div class="card-actions">
-                        <p>誤操作防止の為「DELETE」と入力してください。</p>
+                        <span>データベースの内容を CSV へ書出</span>
+                        <button id="btn-export-database">Export</button>
+                    </div>
+                    <div class="card-actions">
+                        <span>CSV の内容をデータベースに追加</span>
+                        <input type="file" id="import-csv-file" accept=".csv" style="display:none;">
+                        <button id="btn-import-database">Import</button>
+                    </div>
+                    <div class="card-actions">
+                        <span>誤操作防止の為「DELETE」と入力してください。</span>
                         <input type="text" id="confirm-delete-text" placeholder="DELETE" inputmode="latin" />
                         <button id="btn-delete-database" disabled>Delete</button>
                     </div>

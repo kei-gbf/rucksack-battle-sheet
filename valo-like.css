@@ -10,6 +10,9 @@
         --accent-draw: #768087;   /* ドロー用の少し濃い目の灰色 */
         --border-color: #383e42;
         --font-base: 'Segoe UI', Roboto, sans-serif;
+
+        --accent-win-deep: teal;
+        --accent-lose-deep: #800000;
     }
 
     body { 
@@ -76,11 +79,11 @@
     option { color: black;  }
 
     button.add-btn {
-        background-color: teal;
+        background-color: var(--accent-win-deep);
     }
     button.reset-btn {
         color: #888;
-        background-color: #800000;
+        background-color: var(--accent-lose-deep);
     }
     button.del-btn {
         font-size: small;

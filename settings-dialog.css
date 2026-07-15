@@ -72,6 +72,9 @@ input[type="number"] {
     align-items: center;
     margin-top: 10px;
 }
+.card-actions span {
+    margin-right: auto; /* これでテキストが左に押し出される */
+}
 #btn-delete-database:disabled {
     background-color: #aaa;
 }
@@ -82,4 +85,16 @@ input#copy-rows {
 }
 input#copy-rows:disabled {
     background-color: #aaa;
+}
+
+button#btn-export-database {
+    background-color: var(--accent-win-deep);
+}
+
+button#btn-import-database {
+    background-color: var(--accent-lose-deep);
+}
+
+.card-actions button {
+    width: 160px;
 }
